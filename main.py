@@ -1,9 +1,22 @@
 import pandas as pd;
 
-file=open('./data.txt','r');
-col_num=file.readline();
-data=[];
-table=[];
+def read_data(file="./data.txt"):
+	tag=0;
+	data=[];
+	file=open('./data.txt','r');
+	col_num=file.readline();
+	for line in file.readlines():
+		linestr=line.strip('\r').strip('\n');
+		if linestr=='':
+			tag=0;
+			continue;
+		if len(data) < tag+1:
+			data.append([list(linestr)]);
+		else:
+			data[tag].append(list(linestr));
+		tag=tag+1;
+	file.close();
+	return data;
 
 def simple_count(data,is_show=True,show_data=False):
 	df=pd.DataFrame(data);
@@ -25,16 +38,6 @@ def simple_count(data,is_show=True,show_data=False):
 		print("");
 	return result;
 
-for line in file.readlines():
-	linestr=line.strip('\r').strip('\n');
-	if linestr=='':
-		simple_count(table);
-		data.append(table);
-		table=[];
-		continue;
-	table.append(list(linestr));
-if len(table)!=0:
-	data.append(table);
-	simple_count(table);
-
-file.close();
+data=read_data();
+for vote in data:
+	simple_count(vote);
